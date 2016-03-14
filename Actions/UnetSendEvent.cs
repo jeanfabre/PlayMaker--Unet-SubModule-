@@ -13,7 +13,7 @@ namespace HutongGames.PlayMaker.Actions
 	{
 		
 		[RequiredField]
-		[CheckForComponent(typeof(PlayMakerUnetGameObjectProxy))]
+		[CheckForComponent(typeof(PlayMakerUnetNetworkBehaviourProxy))]
 		public FsmOwnerDefault gameObject;
 
 		// ONLY ACCEPTS BROADCAST OR SELF
@@ -42,14 +42,14 @@ namespace HutongGames.PlayMaker.Actions
 		{
 			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
 
-			PlayMakerUnetGameObjectProxy _proxy = go.GetComponent<PlayMakerUnetGameObjectProxy>();
+		//	PlayMakerUnetGameObjectProxy _proxy = go.GetComponent<PlayMakerUnetGameObjectProxy>();
 
-			if (_proxy==null)
-			{
-				return;
-			}
+		//	if (_proxy==null)
+		//	{
+		//		return;
+		//	}
 
-			_proxy.CmdSendPlayMakerEvent(eventToSend.Name,null);
+		//	_proxy.CmdSendPlayMakerEvent(eventToSend.Name,null);
 
 		}
 	}
