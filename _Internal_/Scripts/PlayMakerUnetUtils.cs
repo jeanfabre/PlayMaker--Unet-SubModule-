@@ -12,8 +12,9 @@ using HutongGames.PlayMaker;
 public class PlayMakerUnetUtils {
 
 
-	public static NetworkWriter WriteStreamFromFsmVars(NetworkBehaviour source,NetworkWriter writer,Fsm fromFsm,Dictionary<string, FsmVar> vars,bool debug)
+	public static NetworkWriter WriteStreamFromFsmVars(NetworkBehaviour source,NetworkWriter writer,Fsm fromFsm,Dictionary<string, NamedVariable> vars,bool debug)
 	{
+		
 
 		if (fromFsm==null)
 		{
@@ -23,100 +24,44 @@ public class PlayMakerUnetUtils {
 			
 		writer.Write(vars.Count);
 
-		foreach(KeyValuePair<string, FsmVar> entry in vars)
+		NamedVariable _NamedVariable;
+		string variableName;
+
+		foreach(KeyValuePair<string, NamedVariable> entry in vars)
 		{
 			if (debug) Debug.Log("Writing entry key : " +entry.Key);
 
 			writer.Write(entry.Key);
 
-			FsmVar fsmVar = entry.Value;
-			if (fsmVar.useVariable)
-			{
-				string _name = fsmVar.variableName;
+			variableName = entry.Value.Name;
 
-				if (debug) Debug.Log("Writing entry var ( using variable )" +_name+" of type "+fsmVar.Type);
-
-				switch (fsmVar.Type){
+			switch (entry.Value.VariableType){
 				case VariableType.Int:
-					writer.Write(Convert.ToInt32( PlayMakerUtils.GetValueFromFsmVar(fromFsm,fsmVar) ))    ; //  fromFsm.Variables.GetFsmInt(_name).Value));
+					writer.Write(fromFsm.Variables.GetFsmInt(variableName).Value);
 					break;
 				case VariableType.Float:
-					writer.Write((float)PlayMakerUtils.GetValueFromFsmVar(fromFsm,fsmVar));//fromFsm.Variables.GetFsmFloat(_name).Value);
+				if (debug) Debug.Log("Writing entry var " +variableName+" of type "+entry.Value.VariableType+" = "+fromFsm.Variables.GetFsmFloat(variableName).Value);
+					
+					writer.Write(fromFsm.Variables.GetFsmFloat(variableName).Value);
 					break;
 				case VariableType.Bool:
-					writer.Write(fromFsm.Variables.GetFsmBool(_name).Value);
+					writer.Write(fromFsm.Variables.GetFsmBool(variableName).Value);
 					break;
 				case VariableType.Color:
-
-					writer.Write( fromFsm.Variables.GetFsmColor(_name).Value);
+					if (debug) UnityEngine.Debug.Log("Fsmvar value " +fromFsm.Variables.GetFsmColor(variableName).Value);
+					writer.Write(fromFsm.Variables.GetFsmColor(variableName).Value);
 					break;
 				case VariableType.Quaternion:
-					writer.Write( fromFsm.Variables.GetFsmQuaternion(_name).Value);
+					writer.Write(fromFsm.Variables.GetFsmQuaternion(variableName).Value);
 					break;
 				case VariableType.Rect:
-					Rect _rect = fromFsm.Variables.GetFsmRect(_name).Value;
-					writer.Write(new Vector4(_rect.x,_rect.y,_rect.width,_rect.height));
+					writer.Write(fromFsm.Variables.GetFsmInt(variableName).Value);
 					break;
 				case VariableType.Vector2:
-					writer.Write( fromFsm.Variables.GetFsmVector2(_name).Value);
+					writer.Write(fromFsm.Variables.GetFsmVector2(variableName).Value);
 					break;
 				case VariableType.Vector3:
-					writer.Write((Vector3)PlayMakerUtils.GetValueFromFsmVar(fromFsm,fsmVar));//fromFsm.Variables.GetFsmVector3(_name).Value);
-					break;
-				case VariableType.Texture:
-					// we must write it ( or not add the key)
-				//	writer.Write<Texture>(fromFsm.Variables.GetFsmTexture(_name).Value);
-					break;
-				case VariableType.Material:
-					// we must write it ( or not add the key)
-				//	writer.Write<Material>( fromFsm.Variables.GetFsmMaterial(_name).Value);
-					break;
-				case VariableType.String:
-					writer.Write( fromFsm.Variables.GetFsmString(_name).Value);
-					break;
-				case VariableType.GameObject:
-					writer.Write(fromFsm.Variables.GetFsmGameObject (_name).Value);
-					break;
-				case VariableType.Object:
-					// we must write it ( or not add the key)
-				//	writer.Write<UnityEngine.Object>( fromFsm.Variables.GetFsmObject(_name).Value,null);
-					break;
-				}
-
-			}else{
-
-
-
-				switch (fsmVar.Type){
-				case VariableType.Int:
-					writer.Write(Convert.ToInt32(fsmVar.intValue));
-					break;
-				case VariableType.Float:
-					if (debug) Debug.Log("Writing entry var " +fsmVar.variableName+" of type "+fsmVar.Type+" = "+fsmVar.floatValue);
-					float _valFloat = fsmVar.floatValue;
-					writer.Write(fromFsm.Variables.GetFsmFloat(fsmVar.variableName).Value);
-					break;
-				case VariableType.Bool:
-					writer.Write(fsmVar.boolValue);
-					break;
-				case VariableType.Color:
-					if (debug) UnityEngine.Debug.Log("Fsmvar value " +fromFsm.Variables.GetFsmColor(fsmVar.variableName).Value);
-					writer.Write(fromFsm.Variables.GetFsmColor(fsmVar.variableName).Value);
-					break;
-				case VariableType.Quaternion:
-					writer.Write(fsmVar.quaternionValue);
-					break;
-				case VariableType.Rect:
-					Rect _rect = fsmVar.rectValue;
-					writer.Write(new Vector4(_rect.x,_rect.y,_rect.width,_rect.height));
-					break;
-				case VariableType.Vector2:
-					writer.Write(fsmVar.vector2Value);
-					break;
-				case VariableType.Vector3:
-					Vector3 _var = (Vector3)PlayMakerUtils.GetValueFromFsmVar(fromFsm,fsmVar);
-					if (debug) UnityEngine.Debug.Log("Fsmvar value " +_var);
-					writer.Write(_var);//fsmVar.vector3Value);
+					writer.Write(fromFsm.Variables.GetFsmVector3(variableName).Value);
 					break;
 				case VariableType.Texture:
 					writer.Write (false); // we must write it ( or not add the key)
@@ -127,20 +72,17 @@ public class PlayMakerUnetUtils {
 					//writer.Write<Material>(fsmVar.materialValue);
 					break;
 				case VariableType.String:
-					writer.Write(fsmVar.stringValue);
+					writer.Write(fromFsm.Variables.GetFsmString(variableName).Value);
 					break;
 				case VariableType.GameObject:
-					GameObject _goVar =  fsmVar.gameObjectValue;
-					writer.Write(fromFsm.Variables.GetFsmGameObject(fsmVar.variableName).Value);
+					writer.Write(fromFsm.Variables.GetFsmGameObject(variableName).Value);
 					break;
 
 				case VariableType.Object:
 					writer.Write (false); // we must write it ( or not add the key)
 				//	writer.Write<UnityEngine.Object>(fsmVar.objectReference,null);
 					break;
-				}
 			}
-
 		}
 
 
@@ -155,7 +97,7 @@ public class PlayMakerUnetUtils {
 	/// <param name="vars">The key/Fsm variables</param>
 	/// <param name="reader"> The NetworkReader</param>
 	/// <param name="missingData"> if stream is missing datas, <c>false</c> otherwise which means all expected data was found</param>
-	public static bool ReadStreamToFsmVars(NetworkBehaviour source,Fsm toFsm,Dictionary<string, FsmVar> vars, NetworkReader reader,out bool missingData,bool debug)
+	public static bool ReadStreamToFsmVars(NetworkBehaviour source,Fsm toFsm,Dictionary<string, NamedVariable> vars, NetworkReader reader,out bool missingData,bool debug)
 	{
 		missingData=false;
 
@@ -199,47 +141,38 @@ public class PlayMakerUnetUtils {
 					missingData = true;
 
 				}else{
-					FsmVar _fsmVar = vars[_key];
+					NamedVariable _NamedVariable = vars[_key];
 
-					if (debug) Debug.Log("Variable for key of type "+_fsmVar.Type,source);
+					if (debug) Debug.Log("Variable for key of type "+_NamedVariable.VariableType,source);
 
 					_processedKey.Add (_key);
 
-					switch (_fsmVar.Type)
+					string _variableName = _NamedVariable.Name;
+					switch (_NamedVariable.VariableType)
 					{
 					case VariableType.Int:
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,reader.ReadInt32());
+						toFsm.Variables.GetFsmInt(_variableName).Value = reader.ReadInt32();
 						break;
 					case VariableType.Float:
-						float _varFloat = reader.ReadSingle();
-						//if (debug) Debug.Log("Variable float value = "+_varFloat,source);
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,_varFloat);
+						toFsm.Variables.GetFsmFloat(_variableName).Value = reader.ReadSingle();
 						break;
 					case VariableType.Bool:
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,reader.ReadBoolean());
+						toFsm.Variables.GetFsmBool(_variableName).Value = reader.ReadBoolean();
 						break;
 					case VariableType.Color:
-						Color _c  = reader.ReadColor();
-
-						if (debug) UnityEngine.Debug.Log("Fsmvar value " +_c);
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,_c);
+						toFsm.Variables.GetFsmColor(_variableName).Value = reader.ReadColor();
 						break;
 					case VariableType.Quaternion:
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,reader.ReadQuaternion());
+						toFsm.Variables.GetFsmQuaternion(_variableName).Value =reader.ReadQuaternion();
 						break;
 					case VariableType.Rect:
-						Vector4 _rectRaw = reader.ReadVector4();
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,new Rect(_rectRaw[0],_rectRaw[1],_rectRaw[2],_rectRaw[3]));
+						toFsm.Variables.GetFsmRect(_variableName).Value = reader.ReadRect();
 						break;
 					case VariableType.Vector2:
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,reader.ReadVector2());
+						toFsm.Variables.GetFsmVector2(_variableName).Value = reader.ReadVector2();
 						break;
 					case VariableType.Vector3:
-						Vector3 _var = reader.ReadVector3();
-						//	if (debug) Debug.Log("Variable value = "+_var,source);
-
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,_var);
-
+						toFsm.Variables.GetFsmVector2(_variableName).Value = reader.ReadVector3();
 						break;
 					case VariableType.Texture:
 						reader.ReadBoolean(); // we must read it however to keep moving forward
@@ -250,13 +183,10 @@ public class PlayMakerUnetUtils {
 					//	UnityEngine.Debug.LogWarning("Material not supported in initial data");
 						break;
 					case VariableType.String:
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,reader.ReadString());
+						toFsm.Variables.GetFsmString(_variableName).Value = reader.ReadString();
 						break;
 					case VariableType.GameObject:
-						
-						//UnityEngine.Debug.Log("Found NetworkViewID owner "+_nv.gameObject.name);
-						PlayMakerUtils.ApplyValueToFsmVar(toFsm,_fsmVar,reader.ReadGameObject());
-							
+						toFsm.Variables.GetFsmGameObject(_variableName).Value = reader.ReadGameObject();
 						break;
 					case VariableType.Object:
 						reader.ReadBoolean();

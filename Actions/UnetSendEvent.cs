@@ -5,6 +5,8 @@ using UnityEngine;
 
 using UnityEngine.Networking;
 
+using HutongGames.PlayMaker.Ecosystem.Networking;
+
 namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("Unity Networking")]
