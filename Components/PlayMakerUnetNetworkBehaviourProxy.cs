@@ -57,7 +57,36 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		{
 			return this.m_SendInterval;
 		}
+
 			
+		#endregion
+
+		#region NetworkBehavior Overrides
+
+		public override void OnStartServer()
+		{
+			base.OnStartServer ();
+
+			if (debug) Debug.Log(this.name+ ": OnStartServer ", this);
+			PlayMakerUtils.SendEventToGameObject (this.GetComponent<PlayMakerFSM> (), this.gameObject, "UNET / ON START SERVER");
+		}
+
+		public override void OnStartAuthority ()
+		{
+			base.OnStartAuthority ();
+
+			if (debug) Debug.Log(this.name+ ": OnStartAuthority ", this);
+			PlayMakerUtils.SendEventToGameObject (this.GetComponent<PlayMakerFSM> (), this.gameObject, "UNET / ON START AUTHORITY");
+		}
+
+		public override void OnStartClient()
+		{
+			base.OnStartClient (); 
+
+			if (debug) Debug.Log(this.name+ ": OnStartClient ", this);
+			PlayMakerUtils.SendEventToGameObject (this.GetComponent<PlayMakerFSM> (), this.gameObject, "UNET / ON START CLIENT");
+		}
+
 		#endregion
 
 		#region Variable synchronization
@@ -141,8 +170,8 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		public override bool OnSerialize(NetworkWriter writer, bool forceAll)
 		{
 			CurrentStatus = Status.IsWriting;
-			if (debug) Debug.Log ("OnSerialize forceAll:" + forceAll, this);
-			PlayMakerUnetUtils.WriteStreamFromFsmVars(this,writer, observed.Fsm, NetworkSynchVariableLOT, debug);
+			//if (debug) Debug.Log ("OnSerialize forceAll:" + forceAll, this);
+			PlayMakerUnetUtils.WriteStreamFromFsmVars(this,writer, observed.Fsm, NetworkSynchVariableLOT, false);
 
 			return true;
 		}
@@ -151,10 +180,10 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		{
 			CurrentStatus = Status.IsReading;
 
-			if (debug) Debug.Log ("OnSerialize initialState:" + initialState, this);
+			//if (debug) Debug.Log ("OnSerialize initialState:" + initialState, this);
 			bool missingData = false;
 
-			PlayMakerUnetUtils.ReadStreamToFsmVars(this,observed.Fsm,NetworkSynchVariableLOT,reader,out missingData, debug);
+			PlayMakerUnetUtils.ReadStreamToFsmVars(this,observed.Fsm,NetworkSynchVariableLOT,reader,out missingData, false);
 
 		}
 
