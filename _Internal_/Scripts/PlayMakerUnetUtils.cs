@@ -24,7 +24,6 @@ public class PlayMakerUnetUtils {
 			
 		writer.Write(vars.Count);
 
-		NamedVariable _NamedVariable;
 		string variableName;
 
 		foreach(KeyValuePair<string, NamedVariable> entry in vars)

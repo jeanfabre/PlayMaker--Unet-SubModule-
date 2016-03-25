@@ -68,7 +68,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 			base.OnStartServer ();
 
 			if (debug) Debug.Log(this.name+ ": OnStartServer ", this);
-			PlayMakerUtils.SendEventToGameObject (this.GetComponent<PlayMakerFSM> (), this.gameObject, "UNET / ON START SERVER");
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START SERVER");
 		}
 
 		public override void OnStartAuthority ()
@@ -76,7 +76,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 			base.OnStartAuthority ();
 
 			if (debug) Debug.Log(this.name+ ": OnStartAuthority ", this);
-			PlayMakerUtils.SendEventToGameObject (this.GetComponent<PlayMakerFSM> (), this.gameObject, "UNET / ON START AUTHORITY");
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START AUTHORITY");
 		}
 
 		public override void OnStartClient()
@@ -84,8 +84,27 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 			base.OnStartClient (); 
 
 			if (debug) Debug.Log(this.name+ ": OnStartClient ", this);
-			PlayMakerUtils.SendEventToGameObject (this.GetComponent<PlayMakerFSM> (), this.gameObject, "UNET / ON START CLIENT");
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START CLIENT");
 		}
+
+		#endregion
+
+		#region Network Inter Communication
+
+		[Command]
+		public void Cmd_SendEvent(string eventName)
+		{
+			if (debug) Debug.Log(this.name+ ": Cmd_SendEvent-> "+eventName, this);
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, eventName);
+		}
+
+		[ClientRpc]
+		public void Rpc_SendEvent(string eventName)
+		{
+			if (debug) Debug.Log(this.name+ ": Rpc_SendEvent-> "+eventName, this);
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, eventName);
+		}
+
 
 		#endregion
 
