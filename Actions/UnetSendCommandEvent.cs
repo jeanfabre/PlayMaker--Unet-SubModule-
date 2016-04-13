@@ -9,7 +9,7 @@ using HutongGames.PlayMaker.Actions;
 namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
-	[Tooltip("Sends an Command Event.")]
+	[Tooltip("Sends an Command Event. Requires a PlayMakerUnetNetworkBehaviourProxy Component on the GameObject")]
 	public class UnetSendCommandEvent : FsmStateAction
 	{
 		
@@ -39,6 +39,11 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		{
 
 			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
+
+			if (go == null) 
+			{
+				return;
+			}
 
 			PlayMakerUnetNetworkBehaviourProxy _nb = go.GetComponent<PlayMakerUnetNetworkBehaviourProxy>();
 

@@ -10,42 +10,47 @@ using HutongGames.PlayMaker.Actions;
 namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
-	[Tooltip("Get The Networked GameObject HasAuthority property. Requires a NetworkBehaviour Component on the GameObject")]
-	public class UnetGetHasAuthority : FsmStateAction
+	[Tooltip("Get The Networked GameObject isServer property. Requires a NetworkBehaviour Component on the GameObject")]
+	public class UnetGetIsServer : FsmStateAction
 	{
 		[RequiredField]
 		[CheckForComponent(typeof(NetworkBehaviour))]
 		public FsmOwnerDefault gameObject;
 
-		public FsmEvent hasAuthorityEvent;
+		public FsmEvent isClientEvent;
 
-		public FsmEvent hasNotAuthorityEvent;
+		public FsmEvent isNotClientEvent;
 
 		[UIHint(UIHint.Variable)]
-		public FsmBool hasAuthority;
+		public FsmBool isClient;
 
 
 		public override void Reset()
 		{
 			gameObject = null;
-			hasAuthorityEvent = null;
-			hasNotAuthorityEvent = null;
-			hasAuthority = null;
+			isClientEvent = null;
+			isNotClientEvent = null;
+			isClient = null;
 
 		}
 
 		public override void OnEnter()
 		{
-			CheckIfHasAuthority();
+			CheckIfClient();
 
 
 			Finish();
 
 		}
 
-		void CheckIfHasAuthority()
+		void CheckIfClient()
 		{
 			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
+
+			if (go == null) 
+			{
+				return;
+			}
 
 			NetworkBehaviour _nb = go.GetComponent<NetworkBehaviour>();
 
@@ -53,15 +58,14 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			{
 				return;
 			}
-
-
-			hasAuthority.Value = _nb.hasAuthority;
+				
+			isClient.Value = _nb.isClient;
 
 			if (_nb.isClient)
 			{
-				Fsm.Event(hasAuthorityEvent);
+				Fsm.Event(isClientEvent);
 			}else{
-				Fsm.Event(hasNotAuthorityEvent);
+				Fsm.Event(isNotClientEvent);
 			}
 
 		}

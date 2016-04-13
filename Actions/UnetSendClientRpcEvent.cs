@@ -9,7 +9,7 @@ using HutongGames.PlayMaker.Actions;
 namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
-	[Tooltip("Sends an ClientRpc Event.")]
+	[Tooltip("Sends an ClientRpc Event. Requires a PlayMakerUnetNetworkBehaviourProxy Component on the GameObject")]
 	public class UnetSendClientRpcEvent : FsmStateAction
 	{
 		

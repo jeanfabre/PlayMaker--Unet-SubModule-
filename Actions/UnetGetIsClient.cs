@@ -5,10 +5,12 @@ using UnityEngine;
 
 using UnityEngine.Networking;
 
-namespace HutongGames.PlayMaker.Actions
+using HutongGames.PlayMaker.Actions;
+
+namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
-	[Tooltip("Get The Networked GameObject isClient property")]
+	[Tooltip("Get The Networked GameObject isClient property. Requires a NetworkBehaviour Component on the GameObject")]
 	public class UnetGetIsClient : FsmStateAction
 	{
 		[RequiredField]
@@ -45,14 +47,18 @@ namespace HutongGames.PlayMaker.Actions
 		{
 			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
 
+			if (go == null) 
+			{
+				return;
+			}
+
 			NetworkBehaviour _nb = go.GetComponent<NetworkBehaviour>();
 
 			if (_nb==null)
 			{
 				return;
 			}
-
-
+				
 			isClient.Value = _nb.isClient;
 
 			if (_nb.isClient)

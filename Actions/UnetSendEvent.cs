@@ -10,7 +10,7 @@ using HutongGames.PlayMaker.Ecosystem.Networking;
 namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("Unity Networking")]
-	[Tooltip("Send a PlayMaker Event over the Network")]
+	[Tooltip("Send a PlayMaker Event over the Network. Requires a PlayMakerUnetNetworkBehaviourProxy Component on the GameObject")]
 	public class UnetSendEvent : FsmStateAction
 	{
 		

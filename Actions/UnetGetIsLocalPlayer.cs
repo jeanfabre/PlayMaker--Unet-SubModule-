@@ -5,10 +5,12 @@ using UnityEngine;
 
 using UnityEngine.Networking;
 
-namespace HutongGames.PlayMaker.Actions
+using HutongGames.PlayMaker.Actions;
+
+namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
-	[Tooltip("Get The Networked GameObject is Local Player property")]
+	[Tooltip("Get The Networked GameObject is Local Player property. Requires a NetworkBehaviour Component on the GameObject")]
 	public class UnetGetIsLocalPlayer : FsmStateAction
 	{
 		[RequiredField]
@@ -44,6 +46,11 @@ namespace HutongGames.PlayMaker.Actions
 		void CheckIfLocalPlayer()
 		{
 			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
+
+			if (go == null) 
+			{
+				return;
+			}
 
 			NetworkBehaviour _nb = go.GetComponent<NetworkBehaviour>();
 
