@@ -17,33 +17,33 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[CheckForComponent(typeof(NetworkBehaviour))]
 		public FsmOwnerDefault gameObject;
 
-		public FsmEvent isClientEvent;
+		public FsmEvent isServerEvent;
 
-		public FsmEvent isNotClientEvent;
+		public FsmEvent isNotServerEvent;
 
 		[UIHint(UIHint.Variable)]
-		public FsmBool isClient;
+		public FsmBool isServer;
 
 
 		public override void Reset()
 		{
 			gameObject = null;
-			isClientEvent = null;
-			isNotClientEvent = null;
-			isClient = null;
+			isServerEvent = null;
+			isNotServerEvent = null;
+			isServer = null;
 
 		}
 
 		public override void OnEnter()
 		{
-			CheckIfClient();
+			CheckIfServer();
 
 
 			Finish();
 
 		}
 
-		void CheckIfClient()
+		void CheckIfServer()
 		{
 			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
 
@@ -59,13 +59,13 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 				return;
 			}
 				
-			isClient.Value = _nb.isClient;
+			isServer.Value = _nb.isServer;
 
-			if (_nb.isClient)
+			if (_nb.isServer)
 			{
-				Fsm.Event(isClientEvent);
+				Fsm.Event(isServerEvent);
 			}else{
-				Fsm.Event(isNotClientEvent);
+				Fsm.Event(isNotServerEvent);
 			}
 
 		}

@@ -16,8 +16,13 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 	{
 
 		[RequiredField]
-		[Tooltip("The target to spawn over the network")]
+		[CheckForComponent(typeof(NetworkIdentity))]
+		[Tooltip("The target to spawn over the network. Requires a NetworkIdentity")]
 		public FsmOwnerDefault gameObject;
+
+		[Tooltip("Event Sent if Spawn could not be perform")]
+		public FsmEvent failureEvent;
+
 
 
 		public override void Reset()
@@ -27,10 +32,24 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 
 		public override void OnEnter()
 		{
-			NetworkServer.Spawn(Fsm.GetOwnerDefaultTarget(gameObject));
+			Spawn ();
+		
 
 			Finish ();
 		}
 
+		void Spawn()
+		{
+			if (!NetworkServer.active) {
+				Debug.LogWarning ("NetworkServer is not active. Cannot spawn objects without an active server.");
+
+				Fsm.Event (failureEvent);
+				return;
+			}
+
+			NetworkServer.Spawn(Fsm.GetOwnerDefaultTarget(gameObject));
+		
+		}
+			
 	}
 }

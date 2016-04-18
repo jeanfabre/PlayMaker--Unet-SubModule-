@@ -15,18 +15,27 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 	{
 		[UIHint(UIHint.Variable)]
 		[ObjectType(typeof(NetworkPeerType))]
+		[Tooltip("PeerType value")]
 		public FsmEnum peerType;
 
 		[UIHint(UIHint.Variable)]
+		[Tooltip("PeerType as string")]
 		public FsmString peerTypeAsString;
 
+		[Tooltip("Event sent if peertype is 'Disconnected'")]
 		public FsmEvent disconnected;
 
+		[Tooltip("Event sent if peertype is 'Server'")]
 		public FsmEvent server;
 
+		[Tooltip("Event sent if peertype is 'Client'")]
 		public FsmEvent client;
 
+		[Tooltip("Event sent if peertype is 'Connecting'")]
 		public FsmEvent connecting;
+
+		[Tooltip("Useful if used for watching connection status")]
+		public bool everyframe;
 
 
 		public override void Reset()
@@ -43,9 +52,16 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		{
 			GetPeerType();
 
+			if (!everyframe) 
+			{
+				Finish ();
+			}
 
-			Finish();
+		}
 
+		public override void OnUpdate()
+		{
+			GetPeerType ();
 		}
 
 		void GetPeerType()

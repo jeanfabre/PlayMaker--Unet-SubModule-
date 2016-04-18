@@ -14,7 +14,10 @@ public class PlayMakerUnetUtils {
 
 	public static NetworkWriter WriteStreamFromFsmVars(NetworkBehaviour source,NetworkWriter writer,Fsm fromFsm,Dictionary<string, NamedVariable> vars,bool debug)
 	{
-		
+
+		if (vars == null || vars.Count == 0) {
+			return writer;
+		}
 
 		if (fromFsm==null)
 		{
@@ -99,6 +102,10 @@ public class PlayMakerUnetUtils {
 	public static bool ReadStreamToFsmVars(NetworkBehaviour source,Fsm toFsm,Dictionary<string, NamedVariable> vars, NetworkReader reader,out bool missingData,bool debug)
 	{
 		missingData=false;
+
+		if (vars == null || vars.Count == 0) {
+			return true;
+		}
 
 		if (toFsm==null)
 		{

@@ -165,7 +165,6 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 
 			if (_observed==null)
 			{
-				Debug.LogError ("SetUpFsmVariableToSynch(): No Observed PlayMaker", this);
 				return;
 			}
 
@@ -190,7 +189,9 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		{
 			CurrentStatus = Status.IsWriting;
 			//if (debug) Debug.Log ("OnSerialize forceAll:" + forceAll, this);
-			PlayMakerUnetUtils.WriteStreamFromFsmVars(this,writer, observed.Fsm, NetworkSynchVariableLOT, false);
+			if (observed != null) {
+				PlayMakerUnetUtils.WriteStreamFromFsmVars (this, writer, observed.Fsm, NetworkSynchVariableLOT, false);
+			}
 
 			return true;
 		}
@@ -201,8 +202,9 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 
 			//if (debug) Debug.Log ("OnSerialize initialState:" + initialState, this);
 			bool missingData = false;
-
-			PlayMakerUnetUtils.ReadStreamToFsmVars(this,observed.Fsm,NetworkSynchVariableLOT,reader,out missingData, false);
+			if (observed != null) {
+				PlayMakerUnetUtils.ReadStreamToFsmVars (this, observed.Fsm, NetworkSynchVariableLOT, reader, out missingData, false);
+			}
 
 		}
 

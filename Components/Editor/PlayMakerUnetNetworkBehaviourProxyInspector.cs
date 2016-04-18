@@ -69,26 +69,32 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Editor
 
 			base.serializedObject.Update ();
 
-			// m_NetworkSendIntervalProperty
-			int num = 0;
-			if (this.m_NetworkSendIntervalProperty.floatValue != 0) {
-				num = (int)(1 / this.m_NetworkSendIntervalProperty.floatValue);
-			}
-			int num2 = EditorGUILayout.IntSlider (this.m_NetworkSendIntervalLabel, num, 0, 30, new GUILayoutOption[0]);
-			if (num2 != num) {
-				if (num2 == 0) {
-					this.m_NetworkSendIntervalProperty.floatValue = 0;
-				}
-				else {
-					this.m_NetworkSendIntervalProperty.floatValue = 1 / (float)num2;
-				}
-			}
-
 			EditorGUILayout.PropertyField (this.m_ObservedProperty);
 
+			if (_target.observed != null) 
+			{
+
+				// m_NetworkSendIntervalProperty
+				int num = 0;
+				if (this.m_NetworkSendIntervalProperty.floatValue != 0) {
+					num = (int)(1 / this.m_NetworkSendIntervalProperty.floatValue);
+				}
+				int num2 = EditorGUILayout.IntSlider (this.m_NetworkSendIntervalLabel, num, 0, 30, new GUILayoutOption[0]);
+				if (num2 != num) {
+					if (num2 == 0) {
+						this.m_NetworkSendIntervalProperty.floatValue = 0;
+					} else {
+						this.m_NetworkSendIntervalProperty.floatValue = 1 / (float)num2;
+					}
+				}
+
+
+
+
+			}
 			EditorGUILayout.PropertyField (this.m_NetworkChannelProperty);
 
-			EditorGUILayout.PropertyField(this.m_DebugProperty);
+			EditorGUILayout.PropertyField (this.m_DebugProperty);
 
 			base.serializedObject.ApplyModifiedProperties ();
 
