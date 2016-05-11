@@ -75,7 +75,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		{
 			base.OnStartAuthority ();
 
-			if (debug) Debug.Log(this.name+ ": OnStartAuthority ", this);
+			if (debug) Debug.Log(this.name+ ": OnStartAuthority", this);
 			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START AUTHORITY");
 		}
 
@@ -83,8 +83,25 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		{
 			base.OnStartClient (); 
 
-			if (debug) Debug.Log(this.name+ ": OnStartClient ", this);
+			if (debug) Debug.Log(this.name+ ": OnStartClient", this);
 			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START CLIENT");
+		}
+
+		public override void OnStartLocalPlayer ()
+		{
+			base.OnStartLocalPlayer ();
+
+			if (debug) Debug.Log(this.name+ ": OnStartClient isLocalPlayer:"+isLocalPlayer, this);
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START LOCAL PLAYER");
+		}
+
+
+		public override void OnNetworkDestroy()
+		{
+			base.OnNetworkDestroy (); 
+
+			if (debug) Debug.Log(this.name+ ": OnNetworkDestroy ", this);
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON NETWORK DESTROY");
 		}
 
 		#endregion
@@ -210,5 +227,43 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 
 		#endregion
 
+
+		#region Debug
+
+		void OnGUI()
+		{
+			OnGUI_BeginAreaFollow ();
+				GUILayout.TextArea (CurrentStatus.ToString () +"\n" +
+				"Is Server: "+isServer.ToString () +"\n" +
+				"Is Client: "+isClient.ToString ()+"\n" +
+				"Is localPlayer: "+isLocalPlayer.ToString ()+"\n" +
+				"Has Authority: "+hasAuthority.ToString ()
+						);
+			GUILayout.EndArea();
+		}
+
+
+		private void OnGUI_BeginAreaFollow()
+		{
+			var worldPosition = this.transform.position;
+			var positionInCameraSpace = Camera.main.transform.InverseTransformPoint(worldPosition);
+
+			// get screen position
+
+			Vector2 screenPos = Camera.main.WorldToScreenPoint(worldPosition);
+
+			var left = screenPos.x +30 ;
+			var top = screenPos.y;
+
+			var rect = new Rect(left, top, 150, 200);
+
+
+			// convert screen coordinates
+			rect.y = Screen.height - rect.y;
+
+			GUILayout.BeginArea(rect);
+		}
+
+		#endregion
 	}
 }

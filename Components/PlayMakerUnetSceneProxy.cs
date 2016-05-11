@@ -8,7 +8,7 @@ using HutongGames.PlayMaker;
 public class PlayMakerUnetSceneProxy : NetworkBehaviour {
 
 
-
+	/*
 	public override void OnStartServer()
 	{
 		base.OnStartServer ();
@@ -37,5 +37,5 @@ public class PlayMakerUnetSceneProxy : NetworkBehaviour {
 	{
 		base.OnNetworkDestroy ();
 	}
-
+*/
 }
