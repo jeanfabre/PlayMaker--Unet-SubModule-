@@ -232,14 +232,16 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 
 		void OnGUI()
 		{
-			OnGUI_BeginAreaFollow ();
-				GUILayout.TextArea (CurrentStatus.ToString () +"\n" +
-				"Is Server: "+isServer.ToString () +"\n" +
-				"Is Client: "+isClient.ToString ()+"\n" +
-				"Is localPlayer: "+isLocalPlayer.ToString ()+"\n" +
-				"Has Authority: "+hasAuthority.ToString ()
-						);
-			GUILayout.EndArea();
+			if (debug) {
+				OnGUI_BeginAreaFollow ();
+				GUILayout.TextArea (CurrentStatus.ToString () + "\n" +
+				"Is Server: " + isServer.ToString () + "\n" +
+				"Is Client: " + isClient.ToString () + "\n" +
+				"Is localPlayer: " + isLocalPlayer.ToString () + "\n" +
+				"Has Authority: " + hasAuthority.ToString ()
+				);
+				GUILayout.EndArea ();
+			}
 		}
 
 
