@@ -19,7 +19,10 @@ MonoBehaviour:
   - useExpression: 0
     expression: 
     propertyValue: PlayMaker Utils/**
-  excludes: []
+  excludes:
+  - useExpression: 0
+    expression: 
+    propertyValue: uTomate_Publishing/**
   includeDependencies:
     useExpression: 0
     expression: 

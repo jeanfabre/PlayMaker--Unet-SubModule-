@@ -1,4 +1,4 @@
-PlayMaker--Utils
+PlayMaker--Unet
 ================
 
 ## Licensing
@@ -8,10 +8,12 @@ This package is released under LGPL license: [http://opensource.org/licenses/LGP
 ## Description
 This is the authoritative source code for "PlayMaker Unet", used for working with Unity 5 Networking module.
 
+This is a work in progress. Many concept still needs to be fully understood, and so, chances are that not every possible cases is properly covered by this PlayMaker bridge. 
+
 ## Implementation
 <!--Todo-->
 
-## Including PlayMaker Utils in your Github Rep as a Sub Module using SourceTree
+## Including PlayMaker Unet in your Github Rep as a Sub Module using SourceTree
 1: Delete the existing "PlayMaker Unet" folder if you had it
 2: commit this deletion  
 3: in the side bar of SourceTree, right click "Add SubModule"  
