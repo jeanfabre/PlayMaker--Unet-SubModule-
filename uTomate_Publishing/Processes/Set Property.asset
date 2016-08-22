@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e874f98b40e76409ebb3518677a4a61a, type: 3}
+  m_Name: Set Property
+  m_EditorClassIdentifier: 
+  CreatedWithActionVersion: 1.3
+  propertyName:
+    useExpression: 0
+    expression: 
+    propertyValue: PublishingFolder
+  propertyValue:
+    useExpression: 0
+    expression: 
+    propertyValue: /Users/jeanfabre/Documents/work/Unity/PlayMaker/Ecosystem/Repositories/PlayMakerEcosystemPackagesRep_U5/PlayMaker/Ecosystem/Custom
+      Packages/Unity/
+  onlyIfUnset:
+    useExpression: 0
+    expression: 
+    propertyValue: 0
