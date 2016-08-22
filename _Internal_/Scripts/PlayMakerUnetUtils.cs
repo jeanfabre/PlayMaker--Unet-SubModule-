@@ -118,7 +118,7 @@ public class PlayMakerUnetUtils {
 		List<string> _processedKey = new List<string>();
 
 
-		if (debug) Debug.Log("reading stream",source);
+		if (debug) Debug.Log("reading stream:\n"+reader.ToString(),source);
 
 		try{
 
@@ -178,7 +178,7 @@ public class PlayMakerUnetUtils {
 						toFsm.Variables.GetFsmVector2(_variableName).Value = reader.ReadVector2();
 						break;
 					case VariableType.Vector3:
-						toFsm.Variables.GetFsmVector2(_variableName).Value = reader.ReadVector3();
+						toFsm.Variables.GetFsmVector3(_variableName).Value = reader.ReadVector3();
 						break;
 					case VariableType.Texture:
 						reader.ReadBoolean(); // we must read it however to keep moving forward

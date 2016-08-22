@@ -15,8 +15,8 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Editor
 	{
 		bool m_Initialized;
 
-
 		SerializedProperty m_DebugProperty;
+		SerializedProperty m_SynchDirection;
 		SerializedProperty m_NetworkChannelProperty;
 		SerializedProperty m_NetworkSendIntervalProperty;
 		SerializedProperty m_ObservedProperty;
@@ -44,6 +44,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Editor
 
 			_target = (this.target as PlayMakerUnetNetworkBehaviourProxy);
 
+			this.m_SynchDirection = base.serializedObject.FindProperty ("synchDirection");
 			this.m_DebugProperty = base.serializedObject.FindProperty("debug");
 
 			this.m_NetworkChannelProperty = base.serializedObject.FindProperty ("NetworkChannel");
@@ -73,6 +74,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Editor
 
 			if (_target.observed != null) 
 			{
+				EditorGUILayout.PropertyField (this.m_SynchDirection);
 
 				// m_NetworkSendIntervalProperty
 				int num = 0;

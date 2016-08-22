@@ -33,7 +33,6 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		public override void OnEnter()
 		{
 			Spawn ();
-		
 
 			Finish ();
 		}

@@ -9,12 +9,18 @@ using HutongGames.PlayMaker;
 
 namespace HutongGames.PlayMaker.Ecosystem.Networking
 {
+
 	[RequireComponent(typeof(NetworkBehaviour))]
 	public class PlayMakerUnetNetworkBehaviourProxy : NetworkBehaviour {
 
 		NetworkTransform _t;
+		NetworkIdentity _ni;
 
 		public enum Status {Nothing, IsWriting, IsReading };
+
+		public enum SyncDirection {ServerToClient,ClientToServer};
+
+		public SyncDirection synchDirection;
 
 		public Status CurrentStatus;
 
@@ -41,9 +47,33 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 			Awake_network ();
 		}
 
+		private float _lastClientToServerSynch = 0f;
+		NetworkWriter _nw;
+
 		void Update()
 		{
 			CheckForDirtyFsmVariables();
+
+
+			if (!isServer && hasAuthority && observed != null && synchDirection == SyncDirection.ClientToServer) {
+				CurrentStatus = Status.IsWriting;
+
+				if (Time.realtimeSinceStartup - _lastClientToServerSynch > m_SendInterval) {
+					_lastClientToServerSynch = Time.realtimeSinceStartup;
+
+					Debug.Log ("Synching from Client to Server");
+					_nw = new NetworkWriter ();
+					PlayMakerUnetUtils.WriteStreamFromFsmVars (this, _nw, observed.Fsm, NetworkSynchVariableLOT, true);
+					this.Cmd_SerializeData (_nw.ToArray ());
+				}
+
+
+			} else if (isServer && hasAuthority) {
+				
+
+			}
+
+
 
 		}
 
@@ -59,51 +89,6 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		}
 
 			
-		#endregion
-
-		#region NetworkBehavior Overrides
-
-		public override void OnStartServer()
-		{
-			base.OnStartServer ();
-
-			if (debug) Debug.Log(this.name+ ": OnStartServer ", this);
-			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START SERVER");
-		}
-
-		public override void OnStartAuthority ()
-		{
-			base.OnStartAuthority ();
-
-			if (debug) Debug.Log(this.name+ ": OnStartAuthority", this);
-			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START AUTHORITY");
-		}
-
-		public override void OnStartClient()
-		{
-			base.OnStartClient (); 
-
-			if (debug) Debug.Log(this.name+ ": OnStartClient", this);
-			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START CLIENT");
-		}
-
-		public override void OnStartLocalPlayer ()
-		{
-			base.OnStartLocalPlayer ();
-
-			if (debug) Debug.Log(this.name+ ": OnStartClient isLocalPlayer:"+isLocalPlayer, this);
-			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON START LOCAL PLAYER");
-		}
-
-
-		public override void OnNetworkDestroy()
-		{
-			base.OnNetworkDestroy (); 
-
-			if (debug) Debug.Log(this.name+ ": OnNetworkDestroy ", this);
-			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, "UNET / ON NETWORK DESTROY");
-		}
-
 		#endregion
 
 		#region Network Inter Communication
@@ -122,6 +107,26 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, eventName);
 		}
 
+
+		[Command]
+		public void Cmd_SerializeData(byte[] data)
+		{
+			if (isServer) {
+				
+				if (debug)
+					Debug.Log (this.name + ": Cmd_SerializeData-> ", this);
+
+				CurrentStatus = Status.IsReading;
+
+				//if (debug) Debug.Log ("OnSerialize initialState:" + initialState, this);
+				bool missingData = false;
+				if (observed != null) {
+					PlayMakerUnetUtils.ReadStreamToFsmVars (this, observed.Fsm, NetworkSynchVariableLOT, new NetworkReader(data), out missingData, true);
+				}
+
+			}
+
+		}
 
 		#endregion
 
@@ -159,9 +164,22 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		/// </summary>	
 		void Awake_network()
 		{
+			_ni = this.GetComponent<NetworkIdentity> ();
+
+			if (isServer && observed != null && synchDirection == SyncDirection.ClientToServer) {
+				_ni.connectionToClient.RegisterHandler((short)555,synchHandler);
+			}
+
 			SetUpFsmVariableToSynch();
 
 		}// Awake
+
+
+		void synchHandler(NetworkMessage netMsg)
+		{
+			Debug.Log ("hello");
+
+		}
 
 
 		void CheckForDirtyFsmVariables()
@@ -204,25 +222,29 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 
 		public override bool OnSerialize(NetworkWriter writer, bool forceAll)
 		{
-			CurrentStatus = Status.IsWriting;
-			//if (debug) Debug.Log ("OnSerialize forceAll:" + forceAll, this);
-			if (observed != null) {
-				PlayMakerUnetUtils.WriteStreamFromFsmVars (this, writer, observed.Fsm, NetworkSynchVariableLOT, false);
+			if (synchDirection == SyncDirection.ServerToClient) {
+				CurrentStatus = Status.IsWriting;
+				//if (debug) Debug.Log ("OnSerialize forceAll:" + forceAll, this);
+				if (observed != null) {
+					PlayMakerUnetUtils.WriteStreamFromFsmVars (this, writer, observed.Fsm, NetworkSynchVariableLOT, false);
+				}
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		public override void OnDeserialize(NetworkReader reader, bool initialState)
 		{
-			CurrentStatus = Status.IsReading;
+			if (synchDirection == SyncDirection.ServerToClient) {
+				CurrentStatus = Status.IsReading;
 
-			//if (debug) Debug.Log ("OnSerialize initialState:" + initialState, this);
-			bool missingData = false;
-			if (observed != null) {
-				PlayMakerUnetUtils.ReadStreamToFsmVars (this, observed.Fsm, NetworkSynchVariableLOT, reader, out missingData, false);
+				//if (debug) Debug.Log ("OnSerialize initialState:" + initialState, this);
+				bool missingData = false;
+				if (observed != null) {
+					PlayMakerUnetUtils.ReadStreamToFsmVars (this, observed.Fsm, NetworkSynchVariableLOT, reader, out missingData, false);
+				}
 			}
-
 		}
 
 		#endregion
@@ -234,7 +256,10 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		{
 			if (debug) {
 				OnGUI_BeginAreaFollow ();
-				GUILayout.TextArea (CurrentStatus.ToString () + "\n" +
+				GUILayout.TextArea (
+				"Player ID: "+this.playerControllerId + "\n" +
+				"net ID: "+this.netId + "\n" +
+				"Serialization: "+ CurrentStatus.ToString () + "\n" +
 				"Is Server: " + isServer.ToString () + "\n" +
 				"Is Client: " + isClient.ToString () + "\n" +
 				"Is localPlayer: " + isLocalPlayer.ToString () + "\n" +
