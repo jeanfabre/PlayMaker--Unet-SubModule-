@@ -11,7 +11,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
 	[Tooltip("Get The Networked GameObject isClient property. Requires a NetworkBehaviour Component on the GameObject")]
-	public class UnetGetIsClient : FsmStateAction
+	public class UnetGetIsClient : ComponentAction<NetworkBehaviour>
 	{
 		[RequiredField]
 		[CheckForComponent(typeof(NetworkBehaviour))]
@@ -24,6 +24,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[UIHint(UIHint.Variable)]
 		public FsmBool isClient;
 
+		NetworkBehaviour _networkBehaviour;
 
 		public override void Reset()
 		{
@@ -31,44 +32,32 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			isClientEvent = null;
 			isNotClientEvent = null;
 			isClient = null;
-
 		}
 
 		public override void OnEnter()
 		{
-			CheckIfClient();
-
+			if (UpdateCache (Fsm.GetOwnerDefaultTarget (gameObject))) {
+				_networkBehaviour = (NetworkBehaviour)this.cachedComponent;
+				Execute ();
+			}
 
 			Finish();
-
 		}
 
-		void CheckIfClient()
+		void Execute()
 		{
-			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
-
-			if (go == null) 
-			{
+			if (_networkBehaviour == null) {
 				return;
 			}
 
-			NetworkBehaviour _nb = go.GetComponent<NetworkBehaviour>();
+			isClient.Value = _networkBehaviour.isClient;
 
-			if (_nb==null)
-			{
-				return;
-			}
-				
-			isClient.Value = _nb.isClient;
-
-			if (_nb.isClient)
+			if (_networkBehaviour.isClient)
 			{
 				Fsm.Event(isClientEvent);
 			}else{
 				Fsm.Event(isNotClientEvent);
 			}
-
 		}
 	}
 }
-

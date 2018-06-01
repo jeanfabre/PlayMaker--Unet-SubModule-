@@ -11,7 +11,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
 	[Tooltip("Get The Networked GameObject isServer property. Requires a NetworkBehaviour Component on the GameObject")]
-	public class UnetGetIsServer : FsmStateAction
+	public class UnetGetIsServer : ComponentAction<NetworkBehaviour>
 	{
 		[RequiredField]
 		[CheckForComponent(typeof(NetworkBehaviour))]
@@ -24,6 +24,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[UIHint(UIHint.Variable)]
 		public FsmBool isServer;
 
+		NetworkBehaviour _networkBehaviour;
 
 		public override void Reset()
 		{
@@ -31,40 +32,28 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			isServerEvent = null;
 			isNotServerEvent = null;
 			isServer = null;
-
 		}
+
 
 		public override void OnEnter()
 		{
-			CheckIfServer();
-
+			if (UpdateCache (Fsm.GetOwnerDefaultTarget (gameObject))) {
+				_networkBehaviour = (NetworkBehaviour)this.cachedComponent;
+				Execute ();
+			}
 
 			Finish();
-
 		}
 
-		void CheckIfServer()
+		void Execute()
 		{
-			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
-
-			if (go == null) 
-			{
-				LogError ("Missing GameObject target");
+			if (_networkBehaviour == null) {
 				return;
 			}
 
-			NetworkBehaviour _nb = go.GetComponent<NetworkBehaviour>();
+			isServer.Value = _networkBehaviour.isServer;
 
-			if (_nb==null)
-			{
-				LogError ("Missing NetworkBehaviour Component");
-				return;
-			}
-				
-			UnityEngine.Debug.Log ("Action Is Server? =" + _nb.isServer);
-			isServer.Value = _nb.isServer;
-
-			if (_nb.isServer)
+			if (_networkBehaviour.isServer)
 			{
 				Fsm.Event(isServerEvent);
 			}else{
@@ -74,4 +63,3 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		}
 	}
 }
-

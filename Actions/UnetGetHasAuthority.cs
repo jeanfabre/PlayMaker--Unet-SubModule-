@@ -11,7 +11,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
 	[Tooltip("Get The Networked GameObject HasAuthority property. Requires a NetworkBehaviour Component on the GameObject")]
-	public class UnetGetHasAuthority : FsmStateAction
+	public class UnetGetHasAuthority : ComponentAction<NetworkBehaviour>
 	{
 		[RequiredField]
 		[CheckForComponent(typeof(NetworkBehaviour))]
@@ -24,6 +24,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[UIHint(UIHint.Variable)]
 		public FsmBool hasAuthority;
 
+		NetworkBehaviour _networkBehaviour;
 
 		public override void Reset()
 		{
@@ -31,40 +32,32 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			hasAuthorityEvent = null;
 			hasNotAuthorityEvent = null;
 			hasAuthority = null;
-
 		}
 
 		public override void OnEnter()
 		{
-			CheckIfHasAuthority();
-
+			if (UpdateCache (Fsm.GetOwnerDefaultTarget (gameObject))) {
+				_networkBehaviour = (NetworkBehaviour)this.cachedComponent;
+				Execute ();
+			}
 
 			Finish();
-
 		}
 
-		void CheckIfHasAuthority()
+		void Execute()
 		{
-			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
-
-			NetworkBehaviour _nb = go.GetComponent<NetworkBehaviour>();
-
-			if (_nb==null)
-			{
+			if (_networkBehaviour == null) {
 				return;
 			}
 
+			hasAuthority.Value = _networkBehaviour.hasAuthority;
 
-			hasAuthority.Value = _nb.hasAuthority;
-
-			if (_nb.isClient)
+			if (_networkBehaviour.isClient)
 			{
 				Fsm.Event(hasAuthorityEvent);
 			}else{
 				Fsm.Event(hasNotAuthorityEvent);
 			}
-
 		}
 	}
 }
-

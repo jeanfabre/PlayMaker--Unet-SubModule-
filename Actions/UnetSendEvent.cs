@@ -33,14 +33,14 @@ namespace HutongGames.PlayMaker.Actions
 
 		public override void OnEnter()
 		{
-			SendNetworkedEvent();
+			Execute();
 
 
 			Finish();
 
 		}
 
-		void SendNetworkedEvent()
+		void Execute()
 		{
 			/*
 			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);

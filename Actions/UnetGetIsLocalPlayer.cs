@@ -11,7 +11,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
 	[Tooltip("Get The Networked GameObject is Local Player property. Requires a NetworkBehaviour Component on the GameObject")]
-	public class UnetGetIsLocalPlayer : FsmStateAction
+	public class UnetGetIsLocalPlayer : ComponentAction<NetworkBehaviour>
 	{
 		[RequiredField]
 		[CheckForComponent(typeof(NetworkBehaviour))]
@@ -24,6 +24,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[UIHint(UIHint.Variable)]
 		public FsmBool isLocalPlayer;
 
+		NetworkBehaviour _networkBehaviour;
 
 		public override void Reset()
 		{
@@ -36,33 +37,23 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 
 		public override void OnEnter()
 		{
-			CheckIfLocalPlayer();
-
+			if (UpdateCache (Fsm.GetOwnerDefaultTarget (gameObject))) {
+				_networkBehaviour = (NetworkBehaviour)this.cachedComponent;
+				Execute ();
+			}
 
 			Finish();
-
 		}
 
-		void CheckIfLocalPlayer()
+		void Execute()
 		{
-			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
-
-			if (go == null) 
-			{
+			if (_networkBehaviour == null) {
 				return;
 			}
 
-			NetworkBehaviour _nb = go.GetComponent<NetworkBehaviour>();
+			isLocalPlayer.Value = _networkBehaviour.isLocalPlayer;
 
-			if (_nb==null)
-			{
-				return;
-			}
-
-
-			isLocalPlayer.Value = _nb.isLocalPlayer;
-
-			if (_nb.isLocalPlayer)
+			if (_networkBehaviour.isLocalPlayer)
 			{
 				Fsm.Event(IsLocalPlayerEvent);
 			}else{

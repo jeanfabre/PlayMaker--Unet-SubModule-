@@ -1,5 +1,12 @@
 #PlayMaker Unet Change log
 
+###0.0.4 alpha
+**Release Date:** 01/06/2018 
+
+**New:** `UnetStartClient` `UnetStopClient` `UnetStartServer` `UnetStopServer`
+
+**Update:** refactored andf cleaned up actions to be more robust codewise
+
 ###0.0.3 alpha
 **Release Date:** 09/05/2018  
 

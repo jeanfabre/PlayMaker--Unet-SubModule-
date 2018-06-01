@@ -45,12 +45,12 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 
 		public override void OnEnter()
 		{
-			FindlocalObject ();
+			Execute ();
 
 			Finish ();
 		}
 
-		void FindlocalObject()
+		void Execute()
 		{
 			if (!Network.isServer) {
 				Event (failureEvent);

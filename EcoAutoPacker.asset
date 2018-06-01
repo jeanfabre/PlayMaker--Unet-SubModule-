@@ -28,7 +28,7 @@ MonoBehaviour:
   filesToExclude: []
   author: Jean Fabre
   type: Module
-  version: 0.03a
+  version: 0.04a
   keyWords: Unity multi player network networking lobby
   packageName: PlayMakerUnet
   targetDirectory: /Users/jeanfabre/Documents/Work/Unity/PlayMaker/Ecosystem/Repositories/PlayMakerEcosystemPackagesRep_U5/PlayMaker/Ecosystem/Custom

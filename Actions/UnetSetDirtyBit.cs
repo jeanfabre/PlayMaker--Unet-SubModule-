@@ -22,54 +22,47 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[ObjectType(typeof(NetworkBehaviour))]
 		public FsmObject networkBehaviour;
 
-
 		[RequiredField]
 		[Tooltip("Bit mask to set.")]
 		public FsmInt dirtyBit;
 
 
-		NetworkBehaviour _nb;
+		NetworkBehaviour _networkBehaviour;
 
 		public override void Reset()
 		{
 			gameObject = null;
-
 			networkBehaviour = new FsmObject() {UseVariable= true};
-
 			dirtyBit = null;
-
 		}
 
 		public override void OnEnter()
 		{
-			setDirty();
-
+			Execute();
 
 			Finish();
-
 		}
 
-		void setDirty()
+		void Execute()
 		{
 			if (!networkBehaviour.IsNone) {
-				_nb = networkBehaviour.Value as NetworkBehaviour;
+				_networkBehaviour = networkBehaviour.Value as NetworkBehaviour;
 			}
 
-			if (_nb ==null)
+			if (_networkBehaviour ==null)
 			{
 				GameObject go = Fsm.GetOwnerDefaultTarget (gameObject);
 				if (go != null) {
-					_nb = go.GetComponent<NetworkBehaviour> ();
+					_networkBehaviour = go.GetComponent<NetworkBehaviour> ();
 				}
 			}
 
-			if (_nb==null)
+			if (_networkBehaviour==null)
 			{
 				return;
 			}
 
-			_nb.SetDirtyBit ((uint)dirtyBit.Value);
+			_networkBehaviour.SetDirtyBit ((uint)dirtyBit.Value);
 		}
 	}
 }
-

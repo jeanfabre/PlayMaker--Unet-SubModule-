@@ -10,7 +10,7 @@ using HutongGames.PlayMaker.Actions;
 namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
-	[Tooltip("")]
+	[Tooltip("Register Scene Prefabs")]
 	public class UnetClientSceneRegisterPrefab : FsmStateAction
 	{
 		[Tooltip("The prefab to register")]

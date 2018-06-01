@@ -10,7 +10,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 {
 	[ActionCategory("Unity Networking")]
 	[Tooltip("Sends an Command Event. Requires a PlayMakerUnetNetworkBehaviourProxy Component on the GameObject")]
-	public class UnetSendCommandEvent : FsmStateAction
+	public class UnetSendCommandEvent : ComponentAction<PlayMakerUnetNetworkBehaviourProxy>
 	{
 		
 		[RequiredField]
@@ -28,43 +28,42 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[Tooltip("Optional data to be sent with the event, use GetEventInfo action to retrieve it, Leave to none for no effect")]
 		public FsmString data;
 
+		PlayMakerUnetNetworkBehaviourProxy _playMakerUnetNetworkBehaviourProxy;
 
 		public override void Reset()
 		{
+			gameObject = null;
 			eventTarget = new FsmEventTarget();
 			eventTarget.target = FsmEventTarget.EventTarget.BroadcastAll;
 
 			sendEvent = null;
 
 			data = new FsmString(){UseVariable=true};
-
 		}
 
 		public override void OnEnter()
 		{
-
-			GameObject go = Fsm.GetOwnerDefaultTarget(gameObject);
-
-			if (go == null) 
-			{
-				return;
+			if (UpdateCache (Fsm.GetOwnerDefaultTarget (gameObject))) {
+				_playMakerUnetNetworkBehaviourProxy = (PlayMakerUnetNetworkBehaviourProxy)this.cachedComponent;
+				Execute ();
 			}
 
-			PlayMakerUnetNetworkBehaviourProxy _nb = go.GetComponent<PlayMakerUnetNetworkBehaviourProxy>();
+			Finish();
+		}
 
-			if (_nb==null)
-			{
+		void Execute()
+		{
+			if (_playMakerUnetNetworkBehaviourProxy == null) {
 				return;
 			}
 
 			if (!data.IsNone) {
-				_nb.Cmd_SendEvent_WithStringData(sendEvent.Name,data.Value);
+				_playMakerUnetNetworkBehaviourProxy.Cmd_SendEvent_WithStringData(sendEvent.Name,data.Value);
 			} else {
-				_nb.Cmd_SendEvent (sendEvent.Name);
+				_playMakerUnetNetworkBehaviourProxy.Cmd_SendEvent (sendEvent.Name);
 			}
 
 			Finish ();
 		}
-			
 	}
 }

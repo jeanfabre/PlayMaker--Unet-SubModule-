@@ -10,11 +10,14 @@ using HutongGames.PlayMaker;
 namespace HutongGames.PlayMaker.Ecosystem.Networking
 {
 
+	#pragma warning disable CS0414  
+
 	[RequireComponent(typeof(NetworkBehaviour))]
 	public class PlayMakerUnetNetworkBehaviourProxy : NetworkBehaviour {
 
 		NetworkTransform _t;
 		NetworkIdentity _ni;
+
 
 		public enum Status {Nothing, IsWriting, IsReading };
 

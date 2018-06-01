@@ -23,21 +23,20 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[Tooltip("Event Sent if Spawn could not be perform")]
 		public FsmEvent failureEvent;
 
-
-
 		public override void Reset()
 		{
 			gameObject = null;
+			failureEvent = null;
 		}
 
 		public override void OnEnter()
 		{
-			Spawn ();
+			Execute ();
 
 			Finish ();
 		}
 
-		void Spawn()
+		void Execute()
 		{
 			if (!NetworkServer.active) {
 				Debug.LogWarning ("NetworkServer is not active. Cannot spawn objects without an active server.");
@@ -47,8 +46,6 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			}
 
 			NetworkServer.Spawn(Fsm.GetOwnerDefaultTarget(gameObject));
-		
 		}
-			
 	}
 }
