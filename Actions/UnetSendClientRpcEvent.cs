@@ -25,6 +25,8 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[Tooltip("The event to send to the Client instance from the server")]
 		public FsmEvent sendEvent;
 
+		[Tooltip("Optional data to be sent with the event, use GetEventInfo action to retrieve it, Leave to none for no effect")]
+		public FsmString data;
 
 		public override void Reset()
 		{
@@ -33,6 +35,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 
 			sendEvent = null;
 
+			data = new FsmString(){UseVariable=true};
 		}
 
 		public override void OnEnter()
@@ -46,7 +49,12 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			{
 				return;
 			}
-			_nb.Rpc_SendEvent(sendEvent.Name);
+
+			if (!data.IsNone) {
+				_nb.Rpc_SendEvent_WithStringData(sendEvent.Name,data.Value);
+			} else {
+				_nb.Rpc_SendEvent (sendEvent.Name);
+			}
 
 			Finish ();
 		}

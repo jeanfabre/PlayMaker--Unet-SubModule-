@@ -19,8 +19,6 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 	[RequireComponent(typeof(NetworkBehaviour))]
 	public class PlayMakerUnetNetworkBehaviourCallbacksProxy : NetworkBehaviour {
 
-
-
 		[SerializeField]
 		bool debug = false;
 

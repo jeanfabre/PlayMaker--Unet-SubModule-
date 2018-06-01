@@ -1,5 +1,14 @@
 #PlayMaker Unet Change log
 
+###0.0.3 alpha
+**Release Date:** 09/05/2018  
+
+**Update:** Updated Project to Unity 5.6 
+
+**Update:** Updated PlayMaker to 1.8.9
+
+**Update:** `UnetSendCommandEvent` and `UnetSendClientRpcEvent` now accepts string data option
+
 ###0.0.2 alpha
 **Release Date:** 08/11/2016  
 

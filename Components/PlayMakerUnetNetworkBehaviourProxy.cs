@@ -47,6 +47,13 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 			Awake_network ();
 		}
 
+		void Start()
+		{
+			Debug.Log( "Is Server" + isServer,this);
+
+		}
+
+
 		private float _lastClientToServerSynch = 0f;
 		NetworkWriter _nw;
 
@@ -100,10 +107,27 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, eventName);
 		}
 
+		[Command]
+		public void Cmd_SendEvent_WithStringData(string eventName,string data)
+		{
+			if (debug) Debug.Log(this.name+ ": Cmd_SendEvent-> "+eventName+" : data:"+data, this);
+			Fsm.EventData.StringData = data;
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, eventName);
+		}
+
 		[ClientRpc]
 		public void Rpc_SendEvent(string eventName)
 		{
 			if (debug) Debug.Log(this.name+ ": Rpc_SendEvent-> "+eventName, this);
+			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, eventName);
+		}
+
+
+		[ClientRpc]
+		public void Rpc_SendEvent_WithStringData(string eventName,string data)
+		{
+			if (debug) Debug.Log(this.name+ ": Rpc_SendEvent-> "+eventName+" : data:"+data, this);
+			Fsm.EventData.StringData = data;
 			PlayMakerUtils.SendEventToGameObject(null, this.gameObject, eventName);
 		}
 
@@ -273,8 +297,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking
 		private void OnGUI_BeginAreaFollow()
 		{
 			var worldPosition = this.transform.position;
-			var positionInCameraSpace = Camera.main.transform.InverseTransformPoint(worldPosition);
-
+		
 			// get screen position
 
 			Vector2 screenPos = Camera.main.WorldToScreenPoint(worldPosition);

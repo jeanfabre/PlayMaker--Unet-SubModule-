@@ -49,6 +49,7 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 
 			if (go == null) 
 			{
+				LogError ("Missing GameObject target");
 				return;
 			}
 
@@ -56,9 +57,11 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 
 			if (_nb==null)
 			{
+				LogError ("Missing NetworkBehaviour Component");
 				return;
 			}
 				
+			UnityEngine.Debug.Log ("Action Is Server? =" + _nb.isServer);
 			isServer.Value = _nb.isServer;
 
 			if (_nb.isServer)

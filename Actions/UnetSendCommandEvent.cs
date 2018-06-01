@@ -25,6 +25,9 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 		[Tooltip("The event to send to the Server instance")]
 		public FsmEvent sendEvent;
 
+		[Tooltip("Optional data to be sent with the event, use GetEventInfo action to retrieve it, Leave to none for no effect")]
+		public FsmString data;
+
 
 		public override void Reset()
 		{
@@ -32,6 +35,8 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			eventTarget.target = FsmEventTarget.EventTarget.BroadcastAll;
 
 			sendEvent = null;
+
+			data = new FsmString(){UseVariable=true};
 
 		}
 
@@ -51,7 +56,12 @@ namespace HutongGames.PlayMaker.Ecosystem.Networking.Actions
 			{
 				return;
 			}
-			_nb.Cmd_SendEvent(sendEvent.Name);
+
+			if (!data.IsNone) {
+				_nb.Cmd_SendEvent_WithStringData(sendEvent.Name,data.Value);
+			} else {
+				_nb.Cmd_SendEvent (sendEvent.Name);
+			}
 
 			Finish ();
 		}
